@@ -1,82 +1,66 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.5">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="utf-8" />
+    <title>Leaflet Parcel Map with Google Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="utf-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Leaflet Parcel Map with Google Form&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link</p>
-<p class="p1"><span class="Apple-converted-space">        </span>rel="stylesheet"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script</p>
-<p class="p1"><span class="Apple-converted-space">        </span>src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#map {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div id="map"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const map = L.map('map').setView([34.172, -118.078], 16); // Centered on Pasadena</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>attribution: '© OpenStreetMap contributors'</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}).addTo(map);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Link to your GeoJSON file on Google Drive (converted to direct download)</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const geojsonURL = 'https://drive.google.com/uc?export=download&amp;id=1hGQ3RInTsLJYLOB97Cuw6l2Kz8O6oq52';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>fetch(geojsonURL)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.then(response =&gt; response.json())</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.then(data =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>L.geoJSON(data, {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>style: {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>color: '#3388ff',</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>weight: 1,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>fillOpacity: 0.4</p>
-<p class="p1"><span class="Apple-converted-space">                </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                </span>onEachFeature: function (feature, layer) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const p = feature.properties;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const formBase = 'https://docs.google.com/forms/d/e/1FAIpQLSeXInd6e0-MX-u9EGnlbZ53Z_SQGLO_kIZxjc-5pR5ptbKX-g/viewform?usp=pp_url';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const formLink = `${formBase}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&amp;entry.1929044199=${encodeURIComponent(p.architect || '')}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&amp;entry.1378459837=${encodeURIComponent(p.contractor || '')}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&amp;entry.1693961180=${encodeURIComponent(p.address || '')}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&amp;entry.1119155325=${encodeURIComponent(p.parcel_id || '')}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>layer.on('click', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>window.open(formLink, '_blank');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>layer.bindTooltip(p.address || 'Click for form');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}).addTo(map);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<div id="map"></div>
+
+<script>
+    const map = L.map('map').setView([34.172, -118.078], 16); // Centered on Pasadena
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Load GeoJSON from Google Drive (converted to direct download link)
+    const geojsonURL = 'https://drive.google.com/uc?export=download&id=1hGQ3RInTsLJYLOB97Cuw6l2Kz8O6oq52';
+
+    fetch(geojsonURL)
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data, {
+                style: {
+                    color: '#3388ff',
+                    weight: 1,
+                    fillOpacity: 0.4
+                },
+                onEachFeature: function (feature, layer) {
+                    const p = feature.properties;
+
+                    const formBase = 'https://docs.google.com/forms/d/e/1FAIpQLSeXInd6e0-MX-u9EGnlbZ53Z_SQGLO_kIZxjc-5pR5ptbKX-g/viewform?usp=pp_url';
+
+                    const formLink = `${formBase}
+                        &entry.1929044199=${encodeURIComponent(p.architect || '')}
+                        &entry.1378459837=${encodeURIComponent(p.contractor || '')}
+                        &entry.1693961180=${encodeURIComponent(p.address || '')}
+                        &entry.1119155325=${encodeURIComponent(p.parcel_id || '')}`;
+
+                    layer.on('click', () => {
+                        window.open(formLink, '_blank');
+                    });
+
+                    layer.bindTooltip(p.address || 'Click for form');
+                }
+            }).addTo(map);
+        });
+</script>
+
 </body>
 </html>
