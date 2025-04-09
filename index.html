@@ -1,24 +1,23 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Leaflet Parcel Map with Google Form</title>
+    <title>Altadena Fire Recovery Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    ></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        #map {
-            height: 100vh;
-            width: 100%;
-        }
+        #map { height: 100vh; width: 100%; }
     </style>
 </head>
 <body>
+
+<div style="position: absolute; top: 10px; left: 10px; z-index: 999; background: white; padding: 10px; border-radius: 4px;">
+  <input type="text" id="addressInput" placeholder="Enter address" style="width: 200px;">
+  <button onclick="searchAddress()">Search</button>
+</div>
+
 
 <div id="map"></div>
 
@@ -29,37 +28,83 @@
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Load GeoJSON from Google Drive (converted to direct download link)
-    const geojsonURL = 'https://drive.google.com/uc?export=download&id=1hGQ3RInTsLJYLOB97Cuw6l2Kz8O6oq52';
+    // GeoJSON file parts
+    const parcelFiles = [
+  'altadena_parcels_part_1.geojson',
+  'altadena_parcels_part_2.geojson',
+  'altadena_parcels_part_3.geojson',
+  'altadena_parcels_part_4.geojson'
+];
 
-    fetch(geojsonURL)
-        .then(response => response.json())
-        .then(data => {
-            L.geoJSON(data, {
-                style: {
-                    color: '#3388ff',
-                    weight: 1,
-                    fillOpacity: 0.4
-                },
-                onEachFeature: function (feature, layer) {
-                    const p = feature.properties;
+    // Google Form base link and field IDs
+    const formBase = 'https://docs.google.com/forms/d/e/1FAIpQLSeXInd6e0-MX-u9EGnlbZ53Z_SQGLO_kIZxjc-5pR5ptbKX-g/viewform?usp=pp_url';
 
-                    const formBase = 'https://docs.google.com/forms/d/e/1FAIpQLSeXInd6e0-MX-u9EGnlbZ53Z_SQGLO_kIZxjc-5pR5ptbKX-g/viewform?usp=pp_url';
+    function createFormLink(p) {
+        return formBase +
+            '&entry.1929044199=' + encodeURIComponent(p.architect || '') +
+            '&entry.1378459837=' + encodeURIComponent(p.contractor || '') +
+            '&entry.1693961180=' + encodeURIComponent(p.SitusFullAddress || '') +
+            '&entry.1119155325=' + encodeURIComponent(p.parcel_id || '');
+    }
 
-                    const formLink = `${formBase}
-                        &entry.1929044199=${encodeURIComponent(p.architect || '')}
-                        &entry.1378459837=${encodeURIComponent(p.contractor || '')}
-                        &entry.1693961180=${encodeURIComponent(p.address || '')}
-                        &entry.1119155325=${encodeURIComponent(p.parcel_id || '')}`;
+    function onEachParcel(feature, layer) {
+        const p = feature.properties;
+        const formLink = createFormLink(p);
 
-                    layer.on('click', () => {
-                        window.open(formLink, '_blank');
-                    });
-
-                    layer.bindTooltip(p.address || 'Click for form');
-                }
-            }).addTo(map);
+        layer.on('click', () => {
+            window.open(formLink, '_blank');
         });
+
+        layer.bindTooltip(p.address || 'Click to report info');
+    }
+
+    // Load each file
+    parcelFiles.forEach(file => {
+        fetch(file)
+            .then(res => res.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    style: {
+                        color: '#3388ff',
+                        weight: 1,
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: onEachParcel
+                }).addTo(map);
+            });
+    });
+</script>
+
+
+<script>
+  function searchAddress() {
+    const address = document.getElementById("addressInput").value;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+    fetch(url, {
+      headers: {
+        'User-Agent': 'Altadena-Fire-Recovery-App/1.0 (your@email.com)'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+
+          map.setView([lat, lon], 17);
+
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup("Searched Location").openPopup();
+        } else {
+          alert("Address not found.");
+        }
+      })
+      .catch(err => {
+        console.error("Geocoding error:", err);
+        alert("An error occurred during the search.");
+      });
+  }
 </script>
 
 </body>
